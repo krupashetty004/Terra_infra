@@ -30,7 +30,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (currentUser) {
         const userDocRef = doc(db, 'users', currentUser.uid);
         const userDoc = await getDoc(userDocRef);
-        
         if (userDoc.exists()) {
           setRole(userDoc.data().role);
         }
@@ -39,7 +38,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       setLoading(false);
     });
-
     return () => unsubscribe();
   }, []);
 
@@ -47,8 +45,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const currentUser = result.user;
-      
-      // Set or update the user's role in Firestore based on their selection
       const userDocRef = doc(db, 'users', currentUser.uid);
       await setDoc(userDocRef, {
         uid: currentUser.uid,
@@ -56,23 +52,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         displayName: currentUser.displayName,
         role: intendedRole,
       }, { merge: true });
-      
       setRole(intendedRole);
     } catch (error: any) {
-      if (error.code === 'auth/popup-closed-by-user') {
-        throw new Error('Sign-in popup was closed. Please try again.');
-      }
-      console.error('Error signing in:', error);
-      throw new Error('Failed to sign in. Please try again.');
+      throw new Error('Failed to sign in.');
     }
   };
 
   const logout = async () => {
-    try {
-      await signOut(auth);
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
+    await signOut(auth);
   };
 
   return (
