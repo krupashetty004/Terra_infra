@@ -1,16 +1,16 @@
 # TaskFlow — Terra Infra Task Management App
 
-A simple, real-time task management web app built for the Terra Infra team. Admins can create and assign tasks to users, and users can track and update their own task statuses — all in real time.
+A real-time task management web app built for the Terra Infra team. Admins can create, assign, and delete tasks; users can track and update the status of their own tasks — all synced live via Firestore.
 
 ---
 
 ## What it does
 
-- **Google Sign-In** — users log in with their Google account, no password needed
-- **Role-based access** — when signing in, choose Admin or User depending on your role
-- **Admin Portal** — create tasks, assign them to specific users, and monitor their progress
-- **User Portal** — see your assigned tasks and update their status (Pending → In Progress → Completed)
-- **Live updates** — everything syncs in real time via Firestore, no page refresh needed
+- **Google Sign-In** — log in with a Google account, no password needed
+- **Role-based access** — choose Admin or User when signing in; each role is redirected to its own portal
+- **Admin Portal** — create tasks, assign them to registered users, monitor all task statuses, and delete tasks
+- **User Portal** — see your assigned tasks, expand task details, and update status (Pending → In Progress → Completed)
+- **Live updates** — Firestore real-time listeners keep everything in sync without a page refresh
 
 ---
 
@@ -18,11 +18,29 @@ A simple, real-time task management web app built for the Terra Infra team. Admi
 
 | Layer | Technology |
 |-------|-----------|
-| Frontend | React 18 + TypeScript |
-| Styling | Tailwind CSS v4 |
+| Framework | Next.js 14 (Pages Router) |
+| Language | TypeScript |
+| Styling | Tailwind CSS v3 |
 | Auth | Firebase Authentication (Google) |
 | Database | Firebase Firestore |
-| Build Tool | Vite |
+
+---
+
+## Project Structure
+
+```
+src/
+  pages/
+    index.tsx       # Login page — choose Admin or User role
+    admin.tsx       # Admin Portal — create, assign, delete tasks
+    user.tsx        # User Portal — view & update assigned tasks
+    _app.tsx        # App wrapper with AuthProvider
+  styles/
+    globals.css     # Global Tailwind styles
+  AuthContext.tsx   # Auth state, login/logout logic
+  firebase.ts       # Firebase app initialisation
+firebase-applet-config.json   # Firebase project config
+```
 
 ---
 
@@ -66,7 +84,7 @@ A simple, real-time task management web app built for the Terra Infra team. Admi
    ```bash
    npm run dev
    ```
-   The app will be available at `http://localhost:5173`
+   The app will be available at `http://localhost:3000`
 
 ---
 
@@ -89,13 +107,15 @@ tasks/
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Start local development server |
+| `npm run dev` | Start local development server (port 3000) |
 | `npm run build` | Build for production |
-| `npm run preview` | Preview the production build |
+| `npm start` | Start production server |
+| `npm run lint` | Run ESLint |
 
 ---
 
 ## Notes
 
-- The first person to sign in with a given Google account can self-select their role. For a production setup, consider restricting role assignment to a trusted admin.
-- Firebase Security Rules should be configured to ensure users can only read/update tasks assigned to them.
+- Users self-select their role at sign-in. For production, consider restricting admin role assignment to a trusted flow.
+- Configure Firebase Security Rules so users can only read/update tasks assigned to them.
+- The `.next/` build output folder is git-ignored and should never be committed.
