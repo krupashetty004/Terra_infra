@@ -1,121 +1,103 @@
-# TaskFlow — Terra Infra Task Management App
+# TaskFlow (Terra Infra)
 
-A real-time task management web app built for the Terra Infra team. Admins can create, assign, and delete tasks; users can track and update the status of their own tasks — all synced live via Firestore.
+TaskFlow is a simple team task board for Terra Infra.
 
----
+Admins can create tasks, assign them to teammates, and remove tasks when needed. Users can open their assigned tasks, update status, and mark work complete. Everything updates in real time through Firebase, so the whole team sees the latest state without refreshing.
 
-## What it does
+## Features
 
-- **Google Sign-In** — log in with a Google account, no password needed
-- **Role-based access** — choose Admin or User when signing in; each role is redirected to its own portal
-- **Admin Portal** — create tasks, assign them to registered users, monitor all task statuses, and delete tasks
-- **User Portal** — see your assigned tasks, expand task details, and update status (Pending → In Progress → Completed)
-- **Live updates** — Firestore real-time listeners keep everything in sync without a page refresh
-
----
+- Google sign-in (quick login, no local password management)
+- Role-based experience (Admin or User)
+- Admin portal to create, assign, track, and delete tasks
+- User portal to view task details and update task status
+- Real-time task sync using Firestore listeners
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Framework | Next.js 14 (Pages Router) |
-| Language | TypeScript |
-| Styling | Tailwind CSS v3 |
-| Auth | Firebase Authentication (Google) |
-| Database | Firebase Firestore |
-
----
+- Next.js 14 (Pages Router)
+- React + TypeScript
+- Tailwind CSS
+- Firebase Authentication (Google Provider)
+- Firebase Firestore
 
 ## Project Structure
 
-```
+```text
 src/
   pages/
-    index.tsx       # Login page — choose Admin or User role
-    admin.tsx       # Admin Portal — create, assign, delete tasks
-    user.tsx        # User Portal — view & update assigned tasks
-    _app.tsx        # App wrapper with AuthProvider
+    index.tsx       Login screen (role selection)
+    admin.tsx       Admin dashboard (create/assign/delete)
+    user.tsx        User dashboard (view/update tasks)
+    _app.tsx        Global app wrapper with AuthProvider
   styles/
-    globals.css     # Global Tailwind styles
-  AuthContext.tsx   # Auth state, login/logout logic
-  firebase.ts       # Firebase app initialisation
-firebase-applet-config.json   # Firebase project config
-```
+    globals.css     Global styles
+  AuthContext.tsx   Auth state + login/logout + role handling
+  firebase.ts       Firebase initialization
 
----
+firebase-applet-config.json   Firebase project config
+```
 
 ## Getting Started
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) v18 or higher
-- A Firebase project with **Google Auth** and **Firestore** enabled
+- Node.js 18+
+- A Firebase project with:
+  - Google Authentication enabled
+  - Firestore Database enabled
 
-### Setup
+### 1) Clone and install
 
-1. **Clone the repo**
-   ```bash
-   git clone https://github.com/krupashetty004/Terra_infra.git
-   cd Terra_infra
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Configure Firebase**
-
-   Create a `firebase-applet-config.json` file in the project root with your Firebase project credentials:
-   ```json
-   {
-     "apiKey": "YOUR_API_KEY",
-     "authDomain": "YOUR_PROJECT.firebaseapp.com",
-     "projectId": "YOUR_PROJECT_ID",
-     "storageBucket": "YOUR_PROJECT.firebasestorage.app",
-     "messagingSenderId": "YOUR_SENDER_ID",
-     "appId": "YOUR_APP_ID",
-     "measurementId": "YOUR_MEASUREMENT_ID",
-     "firestoreDatabaseId": "(default)"
-   }
-   ```
-
-4. **Run the dev server**
-   ```bash
-   npm run dev
-   ```
-   The app will be available at `http://localhost:3000`
-
----
-
-## Firestore Data Structure
-
-```
-users/
-  {uid}/
-    uid, email, displayName, role ("admin" | "user")
-
-tasks/
-  {taskId}/
-    title, description, assignedTo (uid), assignedToEmail,
-    status ("Pending" | "In Progress" | "Completed"), createdAt
+```bash
+git clone https://github.com/krupashetty004/Terra_infra.git
+cd Terra_infra
+npm install
 ```
 
----
+### 2) Add Firebase config
 
-## Scripts
+Create `firebase-applet-config.json` in the project root:
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start local development server (port 3000) |
-| `npm run build` | Build for production |
-| `npm start` | Start production server |
-| `npm run lint` | Run ESLint |
+```json
+{
+  "apiKey": "YOUR_API_KEY",
+  "authDomain": "YOUR_PROJECT.firebaseapp.com",
+  "projectId": "YOUR_PROJECT_ID",
+  "storageBucket": "YOUR_PROJECT.firebasestorage.app",
+  "messagingSenderId": "YOUR_SENDER_ID",
+  "appId": "YOUR_APP_ID",
+  "measurementId": "YOUR_MEASUREMENT_ID",
+  "firestoreDatabaseId": "(default)"
+}
+```
 
----
+### 3) Run locally
 
-## Notes
+```bash
+npm run dev
+```
 
-- Users self-select their role at sign-in. For production, consider restricting admin role assignment to a trusted flow.
-- Configure Firebase Security Rules so users can only read/update tasks assigned to them.
-- The `.next/` build output folder is git-ignored and should never be committed.
+Open: http://localhost:3000
+
+## Available Scripts
+
+- `npm run dev` — start development server
+- `npm run build` — create production build
+- `npm start` — run production server
+- `npm run lint` — run lint checks
+
+## Firestore Collections
+
+```text
+users/{uid}
+  uid, email, displayName, role
+
+tasks/{taskId}
+  title, description, assignedTo, assignedToEmail, status, createdAt
+```
+
+## Important Notes
+
+- Right now, users choose their role at sign-in. For production, restrict admin role assignment.
+- Add Firestore security rules so users can only access their own tasks.
+- Keep build files out of git (`.next/` is ignored).
